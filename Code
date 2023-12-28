@@ -1,0 +1,169 @@
+Code:
+1) Sender 1:
+//LoRa esp32 sender 1
+#include 
+*include <U8g21ib . h)
+*include 
+*include <Adafruit Sensor.h> #include <Adafruit BYP28e.h>
+#define BMP SDA 4
+*define BMP SCL 15
+Ad afruit_BYP28e bmp;
+// LORa settings  efine BAND 433E6 LORa frequency  efine SS PIN 18 LORa chip select pin  efine RST PIN 14 // LORa reset pin  efine Dloe PIN 26 // LORa DIOe pin
+// OLED settings  efine OLED CLOCK 15 // OLED SCL pin  efine OLED DATA 4 // OLED SDA Pin  efine OLED RESET 16 // OLED reset pin
+U8G2 SSD13e6 128X64 NONA,YE F HW 12C u8g2(U8G2 Re, OLED RESET, OLED CLOCK, OLED DATA); bool bmplnitialized = false; void setup() { u8g2. begin ; u8g2. tr);
+Serial . begin (1152ee) ; while ( !Seria1) {
+// Wait for serial connection
+LORE. setPins(SS PIN, RST PIN, DIOØ PIN); if (!LoRa . begin(BAND)) {
+ LORa failed ! " ) ; u8g2. clearBuffer() ; u8g2. setCursor(e, 15); u8g2.   initialization failed! n ); u8g2. sendBuffer() ; while (1) {
+// Stay in an endless loop if LORa initialization fails
+ 
+ 
+Wire. begin (BNP SDA, BMP SCL); if ( ! bmp. begin (ex76)) {
+ "Could not find a valid BMP28e sensor, check wiring!  u8g2. clearBuffer() ; u8g2. setCursor(e, 15); u8g2.   not find " ) ; u8g2. setCursor(e, 3e); u8g2.print("a valid n ); u8g2. setCursor(e, 45); u8g2. sensor, " ) ; u8g2. setCursor(e, O); u8g2.wiring!" ) ; u8g2. sendBuffer() ; While (1) {
+// Stay in an endless loop if BMP28e sensor initialization fails
+bmplnitialized = true;
+Serial . print In ( "LORa sender started");
+void loop() { if (!bmplnitialized) {  sensor not initialized! n ) ; u8g2. clearBuffer() ; u8g2. setCursor(e, 15); u8g2.   sensor not initialized ! ") ; u8g2. sendBuffer() ; delay(leøø) ; return ;
+float temperature = bmp . readTemperature() ; float pressure = bmp.readpressure() / Iøe.e;
+Serial . print ( "Temperature :  Serial . print (temperature) ; Serial. print(" cc") ;
+Serial . print ( " \tPressure : 
+Serial . print(pressure) ; Serial. println(" hPa") ; u8g2. clearBuffer() ; u8g2. setCursor(e, 15); // Set the cursor position u8g2. print ( "Temperature : " // Print text u8g2. setCursor(e, 3B); // Set the cursor position u8g2. print (temperature) ; // Print temperature value u8g2. setCursor(e, 45); // Set the cursor position u8g2. print( "Pressure: // Print text u8g2. setCursor(e, 6ø); // Set the cursor position u8g2. print (pressure) ; // Print pressure value u8g2. sendBuffer() ;
+// Convert the temperature End pressure values to strings
+String temperatureStr = String(temperature) ;
+	String pressureStr	String(pressure) ;
+// Prepare the data packet to be sent
+String datapacket = "Temperature:	+ temperatureStr +	Pres sure:	+ pressureStr +	hPa"  // Send temperature and pressure data via LORa
+LORa . beginPacket();
+LORa 
+LORa . print(temperature) ;
+LORa.print(" 
+LORa 
+LORa . print(pressure) ;
+LORa.endPacket() ;
+Print transmission status to Serizl Monitor Serial. print In ("Sending data over LoRa. . . n ) ; delay (Bee);
+2) Sender 2:
+//LoRa esp32 sender 2
+*include 
+*include <U8g21ib . 
+ 
+#include 
+*define DHT PIN 4
+*define DHT TYPE DHT22 // Chénge DHT TYPE to DHT22 for DHT22 sensor
+// LORa settings	
+ 	 efine BAND 433E6  	 	LORa frequency
+ 	 efine SS PIN 18	 	 	LORa chip select pin
+ 	 efine RST PIN 14 //	LORa reset pin
+ 	 efine Dloe PIN 26 //
+// OLED settings	LORa D109 pin
+ 	 efine OLED CLOCK 15	// OLED SCL pin
+ 	 efine OLED DATA 4	// OLED SDA pin
+ efine OLED RESET 16	// OLED reset pin
+DHT dht(DHT PIN, DHT TYPE);
+U8G2 SSD13e6 128X64 NONA,YE F HW 12C u8g2(U8G2 Re, OLED RESET, OLED CLOCK, OLED DATA); bool dhtlnitialized = false; void setup() { u8g2. begin ; u8g2. tr);
+Serial . begin (1152ee) ; while ( !Seria1) {
+// Wait for serial connection
+L0Ra.setPins(ss PIN, RST PIN, DIOØ PIN); if (!LoRa . begin(BAND)) {
+ LORa failed ! " ) ; u8g2. clearBuffer() ; u8g2. setCursor(e, 15); u8g2.   initialization failed! n ); u8g2. sendBuffer() ; While (1) {
+// Stay in an endless loop if LORa initialization fails
+dht.begin(); dhtlnitialized = true;
+Serial . print In ( "LORa sender started");
+void loop() { if (!dhtlnitialized) {
+Serial.print1n("DHT sensor not initialized!")  u8g2. clearBuffer() ; u8g2. setCursor(e, 15); u8g2.   sensor not initialized!" ) ; u8g2. sendBuffer() ; delay(leøø) ; return ;
+float humidity = dht .readHumidity(); Serial . 
+Serial . print(humidity) ; Serial . print In(" P ) ; u8g2. clear-Buffer() ; u8g2. setCursor(e, 15); // Set the cursor position u8g2.   n ) ; // Print text u8g2. setCursor(e, 3B); // Set the cursor position u8g2. print(humidity); // Print humidity value u8g2. sendBuffer ;
+// Convert the humidity value to a string
+String humidityStr = String(humidity) ;
+// Prepare the data packet to be sent
+String datapacket = "Humidity : " + humidityStr +  
+// Send humidity data via LoRa
+LORa . begin Packet() ;
+LORE .   n) ;
+LORE . print(humidity) ;
+LORE . endPacket();
+// Print transmission status to Serizl Monitor
+Serial.   data over LoRa. . . n ); delay (Bee);
+3) Transceiver Code:
+#include "th ingProperties . h"
+#include  
+#include <LoRa  *include <uiFi 
+#include  
+ efine	SCK 5
+ 	 efine	MISO 19
+ efine	MOSI 27
+ 	 efine	SS 18
+ 	 efine	RST 14
+*define	Dloe 26
+// LORa	frequency
+ 	 efine	BAND 433E6
+// Define the pins used by the LORE transceiver module
+String LoRaData;
+// WiFi credentials const char* ssid = "your_network ssid"  const char* password "your_network_pas sword  // PHP script URL const char* phpScriptUr1 "http://192.168.241.124/bmp28e_project/test data_final . php n ;
+// Variables to store received values
+String receivedTemperature;
+String receivedpressure; String receivedHumidity; int received RSSI; void setup() {
+// Initialize serial and wait for the port to open
+Serial . begin(96øe) ;
+// This delay gives the chance to wait for a Serial Monitor without blocking if none is found delay (15ee);
+// Defined in thingProperties . h initProperties ( ) ;
+// Connect to Arduino 10T Cloud
+ArduinoC10ud . begin (ArduinoIoTPref erredConnection) ;
+The following function Ellows you to obtain more information related to the state of network arid 10T Cloud connection and errors.
+The higher the number, the more granular information you ' 11 get. The default is e (only errors)  Maximum is 4.
+setDebugMessageLeve1 (2) ;
+ArduinoC10ud . printDebugInfo( ) ; // Initiélize SPI LORa pins
+SPI.begin(SCK, MISO, MOSI, SS);
+// Setup LoRa transceiver module LORE. setPins(SS, RST, Dloe); if   {
+Serial.print1n("Starting LORa failed ! o ); While (1);
+Serial.   Initializing OK! n ) ;
+// Connect to WiFi netnork WiFi. begin (ssid, password); while (WiFi.status() WL CONNECTED) { delay(leøø) ;  to uiFi. . . 0 ) ;
+void loop() {
+ArduinoC10ud . update(); // Try to parse packet int packetSize LORa . parsePacket(); if (packetSize) {
+// Received a packet
+Serial.print( "Received packet: 
+// Read packet while (LORa . available()) {
+LoRaData = LORE . readString();
+Serial .pr'int1n(LoRaData) ;
+// Extract values based on parameter if (LORaData . indexOf( "Temperature: 
+receivedTemperature = getVa1ue(LoRaData, "Temperature: % "  receivedPressure = getVa1ue(LoRaData, "Pressure: 
+) else if  receivedHumidity = getVa1ue(LoRaData, "Humidity: % 
+// Check if all parameters are received if ( !receivedTemperature.isEmpty() && !receivedPressure.isEmpty() && !receivedHumidity . isEmpty()) {
+// Print received values
+Serial . print( "T emperature :  
+Serial . println ( receivedTemperature) ; Serial . print( "Pressu re:  
+Serial . println (receivedpressure) ;
+Serial .   n ) ;
+Serial . println (receivedHumidity) ;
+// Print RSSI of packet receivedRSSI = LORE . packetRssi(); Serial   RSSI n ) ;
+Serial . println (receivedRSSI) ; // Update ArdLino 10T Cloud varizbles temperature = receivedTemperature. toF10at(); pressure = receivedPressure. toF10at() ; humidity = receivedHumidity. toF10at() ; // Send values to the database sendDataToDatabase(receivedTemperature, receivedpressure, rec eivedHumidity, rec eived RSSI ) ;
+// Reset variables receivedTemperature = receivedPressure = receivedHumidity 
+// Function to extract a value betueen two delimiters
+String getVa1ue(String data, String startDe1imiter, String endDe1iriter) { int startlndex = data . indexOf(startDe1imiter) + startDe1imiter . length(); int endlndex = data . indexOf(endDe1imiter, startlndex); return data .substring(startlndex, endlndex) ;
+// Function to send data to PHP script and insert into the database void sendDataToDätabase(String temperature, String pressure, String humidity, int rssi) { if (UiFi.status() WL CONNECTED) { HTTPC1ient http; http.begin(phpScriptUr1);
+// Set content-type header http.addHeader("Content-Type", "application/ x -w" -form -urlencod ed " ) ; // Build the data to send in the request body
+	String requestBody	"temperature:" + temperature +   + pressure +	umidity=" + humidity +
++ rssi;
+// Send POST request int httpResponseCode = http. POST (req uestBody) ; if (httpResponseCode > e) {
+String response = http.getString() ;
+Serial .println( "Data sent successfully"); Serial . println( "Response: " + response);   else {
+Serial .println( "Error sending data");
+	Serial .println( "HTTP Response code:	+ String(httpResponseCode)) ;
+  Disconnected");
+4) PHP Code:
+<?php
+// Database credentials
+ 
+$servername = " localhost" ,
+$username = "root"; $password = 
+$dbname = "sensor db";
+// Get temperature and pressure values from POST data
+$temperature = $ POST['temperature'],
+$pressure = $ POST['pressure'], $humidity = $ POST['humidity'],
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+ Check connection if ($conn->connect_error) { die("Connection failed: " $conn->connect_error);
+// Prepare and execute the SQL query
+$sql = "INSERT INTO LoRawan_final (temperature, pressure,humidity) VALUES ('$temperature',
+' $pressure' $humidity') " ;
+if ($conn->query($sql) TRUE) { echo "Data inserted successfully" ,
+} else { echo "Error. $sql . "<br>" . $conn->error;
+$conn->close();

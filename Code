@@ -167,3 +167,4 @@ $sql = "INSERT INTO LoRawan_final (temperature, pressure,humidity) VALUES ('$tem
 if ($conn->query($sql) TRUE) { echo "Data inserted successfully" ,
 } else { echo "Error. $sql . "<br>" . $conn->error;
 $conn->close();
+?>
